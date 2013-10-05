@@ -38,6 +38,16 @@ body {
 	background: #eeeeef;
 }
 
+.notification {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  margin-left: -100px;
+  width: 200px;
+  text-align: center;
+}
+
 #main-content {
   max-width: 940px;
   padding: 10px 20px 0px;
