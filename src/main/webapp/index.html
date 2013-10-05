@@ -81,7 +81,7 @@
     var client = null;
     var username = null;
       (function() {
-        var socket = new SockJS('/spring-websocket-simple/portfolio');
+        var socket = new SockJS('/chatter/portfolio');
         client = Stomp.over(socket);
 
        /*  var appModel = new ApplicationModel(client);
