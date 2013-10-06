@@ -36,7 +36,9 @@ public class SockController {
 	@SubscribeEvent("/join")
 	public List<String> join(Principal principal) throws Exception {
 		logger.debug(principal.getName() + " joined the chat!");
-		users.add(principal.getName());
+		if(!users.contains(principal.getName())) {
+			users.add(principal.getName());
+		}
 		
 		// notify all subscribers of new user
 		messagingTemplate.convertAndSend("/topic/join", principal.getName());

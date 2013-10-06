@@ -6,6 +6,14 @@ app.filter('reverse', function() {
   };
 });
 
+app.directive('ngFocus', function() {
+    return function(scope, element, attrs) {
+      element.bind('click', function() {
+        $('.' + attrs.ngFocus)[0].focus();
+      });
+    };
+});
+
 app.factory('socket', function($rootScope) {
 
     var socket = new SockJS('/chatter/portfolio');
@@ -19,7 +27,7 @@ app.factory('socket', function($rootScope) {
     };
 });
 
-app.controller('ChatCtrl', ['$scope', 'socket', function($scope, socket) {
+app.controller('ChatCtrl', ['$rootScope', '$scope', 'socket', function($rootScope, $scope, socket) {
   $scope.chats = [];
   stompClient = socket.stompClient;
 
@@ -37,36 +45,20 @@ app.controller('ChatCtrl', ['$scope', 'socket', function($scope, socket) {
       message = JSON.parse(message.body);
       message.direction = 'incoming';
       $scope.addChat(message);
+      $scope.$apply(); // since inside closure
     });
     
     
-     $('#chatForm').submit(function(e) {
-        chat = {
-            to: $('#to').val(),
-            message: $('#message').val(),
-            from: userName
-        };
-
-        stompClient.send("/app/chat", {}, JSON.stringify(chat));
-        
-        chat.from = 'Me';
-        chat.direction = 'outgoing';
-        $scope.addChat(chat);
-        $scope.$apply();
-
-        $('#message').val('');
-        $('#message').focus();
-        
-        e.preventDefault();
-      });
-
   });
 
+  $scope.$on('sendingChat', function(event, chat) {
+    $scope.addChat({'from': 'Me', 'to': chat.to, 'message': chat.message, 'direction': 'outgoing'});
+  });
 
  
   $scope.addChat = function(chat) {
     $scope.chats.push(chat);
-    $scope.$apply();
+    //$scope.$apply();
   };
  
  
@@ -74,21 +66,22 @@ app.controller('ChatCtrl', ['$scope', 'socket', function($scope, socket) {
 
 
 
-app.controller('FormCtrl', ['$scope', 'socket', function($scope, socket) {
+app.controller('FormCtrl', ['$rootScope', '$scope', 'socket', function($rootScope, $scope, socket) {
   $scope.users = [];
+  $scope.stompClient = socket.stompClient;
   stompClient = socket.stompClient;
 
   $scope.$on('sockConnected', function(event, frame) {
 
-    userName = frame.headers['user-name'];
-    queueSuffix = frame.headers['queue-suffix'];
+    $scope.userName = frame.headers['user-name'];
+    $scope.queueSuffix = frame.headers['queue-suffix'];
    
     // stompClient.subscribe("/queue/time-updates", function(message) {
     //   $('#notifications').html('<span>' + JSON.parse(message.body) + '</span>');
     // });
     
     // be notified of other joins
-    stompClient.subscribe("/topic/join", function(message) {
+    $scope.stompClient.subscribe("/topic/join", function(message) {
       console.log(message.body);
       user = JSON.parse(message.body);
       console.log($scope.users);
@@ -101,7 +94,7 @@ app.controller('FormCtrl', ['$scope', 'socket', function($scope, socket) {
       
     });
 
-    stompClient.subscribe('/app/join', function(message) {
+    $scope.stompClient.subscribe('/app/join', function(message) {
       console.log("All users: " );
       console.log(message);
       $scope.users = JSON.parse(message.body);
@@ -109,6 +102,17 @@ app.controller('FormCtrl', ['$scope', 'socket', function($scope, socket) {
     });
     
   });
+
+  $scope.sendMessage = function(chat) {
+    console.log(chat);
+    chat.from = $scope.userName;
+    $scope.stompClient.send("/app/chat", {}, JSON.stringify(chat));
+        
+    $rootScope.$broadcast('sendingChat', chat);
+    
+    $scope.chat.message = '';       
+
+  };
 
   $scope.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);

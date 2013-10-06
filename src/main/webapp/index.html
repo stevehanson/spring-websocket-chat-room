@@ -34,23 +34,22 @@
    	<div class="row">
    		<div class="col-md-12">
    		
-   			<form role="form" id="chatForm" ng-controller="FormCtrl">
+   			<form role="form" id="chatForm" ng-controller="FormCtrl" ng-submit="sendMessage(chat)">
           <div class="alert alert-info notification" id="joinedChat" >
             {{latestUser}} has joined the chat!
           </div>
   			  <div class="form-group">
   			    <label for="to">Send To</label>
-  			    <select class="form-control" id="to" name="to">
+  			    <select class="form-control" id="to" name="to" ng-model="chat.to">
   			    	<option value="">Select Recipient</option>
   			    	<option ng-repeat="user in users" value="{{user}}">{{capitalize(user)}}</option>
-  			    	<option value="steve">Steve</option>
   			    </select>
   			  </div>
   			  <div class="form-group">
   			    <label for="message">Message</label>
-  			    <textarea class="form-control" id="message" name="message" placeholder="Message..." rows="3"></textarea>
+  			    <textarea class="form-control focus-on-click" name="message" placeholder="Message..." rows="3" ng-model="chat.message"></textarea>
   			  </div>
-  			  <input type="submit" id="send" name="send" class="btn btn-primary" value="Send.." />
+  			  <input type="submit" ng-focus="focus-on-click" name="send" class="btn btn-primary" value="Send.." />
    			</form>
    		
    		</div>
