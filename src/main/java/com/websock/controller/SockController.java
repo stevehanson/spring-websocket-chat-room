@@ -1,10 +1,7 @@
 package com.websock.controller;
 
 import java.security.Principal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -19,18 +16,22 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import com.websock.model.Chat;
+import com.websock.service.RandomFactService;
 
 @Controller
 public class SockController {
 	
 	private static final Log logger = LogFactory.getLog(SockController.class);
-	private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
 	private final SimpMessageSendingOperations messagingTemplate;
+	private final RandomFactService randomFactService;
 	private List<String> users = new ArrayList<String>();
 	
 	@Autowired
-	public SockController(SimpMessageSendingOperations messagingTemplate) {
+	public SockController(RandomFactService randomFactService, SimpMessageSendingOperations messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
+		this.randomFactService = randomFactService;
+		
 	}
 		
 	@SubscribeEvent("/join")
@@ -61,10 +62,9 @@ public class SockController {
 		return exception.getMessage();
 	}
 	
-	@Scheduled(fixedDelay=1000)
-	public void sendTimeUpdates() {
-		//System.out.println("Sending message");
-		this.messagingTemplate.convertAndSend("/queue/time-updates", dateFormat.format(new Date()));
+	@Scheduled(fixedDelay=5000)
+	public void sendRandomFact() {
+		this.messagingTemplate.convertAndSend("/queue/random-fact", randomFactService.randomFact());
 	}
 	
 	

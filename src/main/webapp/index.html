@@ -7,17 +7,16 @@
     <!-- <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet"> -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/common/portfolio.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
   </head>
   <body>
 
     <header class="container">
       <div id="heading" class="masthead">
         <div class="pull-right">
-        	<button data-bind="click: logout" class="btn"><i class="icon-off"></i></button>
+        	<a href="logout.html" data-bind="click: logout" class="btn">Logout<i class="icon-off"></i></a>
         </div>
         <h2>Chat Roomm!</h2>
-        <div class="pull-right" id="notifications"> </div>
+        <div class="pull-right" ng-controller="RandomFactCtrl">{{fact}}</div>
         <div id="chatTest"> </div>
       </div>
    </header>
@@ -74,19 +73,16 @@
   
     <!-- 3rd party -->
     <script src="assets/lib/jquery/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
     <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
     
     <script src="assets/lib/sockjs/sockjs.js"></script>
     <script src="assets/lib/stomp/dist/stomp.js"></script>
 
     <!-- application -->
-    <script src="chat.js"></script>
-    <script type="text/javascript">
-      (function() {
-        var socket = new SockJS('/chatter/portfolio');
-        stompClient = Stomp.over(socket);
-      })();
-    </script>
+    <script src="app.js"></script>
+    <script src="chatCtrl.js"></script>
+    <script src="formCtrl.js"></script>
 
   </body>
 </html>
