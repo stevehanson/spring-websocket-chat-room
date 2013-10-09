@@ -5,15 +5,17 @@ app.controller('ChatCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
 
     $scope.$on('sockConnected', function(event, frame) {
 
-        userName = frame.headers['user-name'];
+        $scope.userName = frame.headers['user-name'];
         queueSuffix = frame.headers['queue-suffix'];
 
         
         $scope.stompClient.subscribe("/queue/chats" + queueSuffix, function(message) {
-            message = JSON.parse(message.body);
-            message.direction = 'incoming';
-            $scope.addChat(message);
-            $scope.$apply(); // since inside closure
+            $scope.processIncomingMessage(message, false);
+        });
+
+        $scope.stompClient.subscribe("/queue/chats", function(message) {
+            console.log("processing");
+            $scope.processIncomingMessage(message, true);
         });
         
         
@@ -26,10 +28,19 @@ app.controller('ChatCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
         $scope.addChat(chat);
     });
 
+    $scope.processIncomingMessage = function(message, isBroadcast) {
+        message = JSON.parse(message.body);
+        message.direction = 'incoming';
+        message.broadcast = isBroadcast;
+        if(message.from != $scope.userName) {
+        	$scope.addChat(message);
+            $scope.$apply(); // since inside subscribe closure
+        }
+    };
+
  
     $scope.addChat = function(chat) {
         $scope.chats.push(chat);
-        //$scope.$apply();
     };
  
  

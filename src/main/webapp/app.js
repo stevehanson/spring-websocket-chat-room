@@ -40,10 +40,7 @@ app.controller('RandomFactCtrl', ['$rootScope', '$scope', 'socket', function($ro
         $scope.stompClient.subscribe("/queue/random-fact", function(message) {
             $scope.fact = JSON.parse(message.body);
             $scope.$apply();
-        });
-        
-        
-        
+        }); 
     });
  
 }]);

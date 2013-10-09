@@ -15,8 +15,7 @@
         <div class="pull-right">
         	<a href="logout.html" data-bind="click: logout" class="btn">Logout<i class="icon-off"></i></a>
         </div>
-        <h2>Chat Roomm!</h2>
-        <div class="pull-right" ng-controller="RandomFactCtrl">{{fact}}</div>
+        <h2>Chatter <small>Online Chat Room</small></h2>
         <div id="chatTest"> </div>
       </div>
    </header>
@@ -34,13 +33,14 @@
    		<div class="col-md-12">
    		
    			<form role="form" id="chatForm" ng-controller="FormCtrl" ng-submit="sendMessage(chat)">
-          <div class="alert alert-info notification" id="joinedChat" >
+          <div class="alert alert-info notification" id="joinedChat" ng-if="latestUser" ng-animate="{enter: 'fade', leave: 'fade'}">
             {{latestUser}} has joined the chat!
           </div>
   			  <div class="form-group">
   			    <label for="to">Send To</label>
   			    <select class="form-control" id="to" name="to" ng-model="chat.to">
   			    	<option value="">Select Recipient</option>
+              <option value="all">All Users</option>
   			    	<option ng-repeat="user in users" value="{{user}}">{{capitalize(user)}}</option>
   			    </select>
   			  </div>
@@ -57,13 +57,22 @@
    	
    	<div class="row">
    		<div class="col-md-12" id="chats" ng-controller="ChatCtrl">
-   			<div ng-repeat="chat in chats | reverse" class="chat {{chat.direction}}">
-          <span class="from">{{chat.from}}</span>
+   			<div ng-repeat="chat in chats | reverse" class="chat {{chat.direction}}" ng-class="{'broadcast': chat.broadcast}">
+          <span class="from">
+            {{chat.from}}
+            <small ng-if="chat.broadcast">BROADCAST</small>
+          </span>
           <span class="message">{{chat.message}}</span>
         </div>
    		</div>
    		
    	
+   	</div>
+   	
+   	<div class="row">
+   		<div class="col-md-12">
+   	 		<div class="pull-right" ng-controller="RandomFactCtrl">{{fact}}</div>
+   	 	</div>
    	</div>
    	
  
@@ -73,7 +82,7 @@
   
     <!-- 3rd party -->
     <script src="assets/lib/jquery/jquery.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
     <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
     
     <script src="assets/lib/sockjs/sockjs.js"></script>

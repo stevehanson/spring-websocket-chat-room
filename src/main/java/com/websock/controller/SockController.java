@@ -49,11 +49,16 @@ public class SockController {
 
 	@MessageMapping(value="/chat")
 	public void getChat(Chat chat, Principal principal) {
-		
 		chat.setFrom(principal.getName());
+
+		if("all".equals(chat.getTo())) {
+			logger.error("Broadcasting chat");
+			messagingTemplate.convertAndSend("/queue/chats", chat);
+		}
+		else {
+			messagingTemplate.convertAndSendToUser(chat.getTo(), "/queue/chats", chat);
+		}
 		
-		logger.debug("Received chat " + chat.toString());
-		messagingTemplate.convertAndSendToUser(chat.getTo(), "/queue/chats", chat);
 	}
 	
 	@MessageExceptionHandler
