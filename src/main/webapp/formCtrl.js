@@ -10,9 +10,7 @@ app.controller('FormCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
         
         // be notified of other joins
         $scope.stompClient.subscribe("/topic/join", function(message) {
-            console.log(message.body);
             user = JSON.parse(message.body);
-            console.log($scope.users);
             if(user != userName && $.inArray(user, $scope.users) == -1) {
                 $scope.addUser(user);
                 $scope.latestUser = user;
@@ -23,8 +21,6 @@ app.controller('FormCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
         });
 
         $scope.stompClient.subscribe('/app/join', function(message) {
-            console.log("All users: " );
-            console.log(message);
             $scope.users = JSON.parse(message.body);
             $scope.$apply();
         });
@@ -32,12 +28,9 @@ app.controller('FormCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
     });
 
     $scope.sendMessage = function(chat) {
-        console.log(chat);
         chat.from = $scope.userName;
         $scope.stompClient.send("/app/chat", {}, JSON.stringify(chat));
-                
         $rootScope.$broadcast('sendingChat', chat);
-        
         $scope.chat.message = '';
 
     };

@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Chatter | Chat Room</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-    <!-- <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet"> -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/common/portfolio.css" rel="stylesheet">
   </head>
@@ -16,7 +15,11 @@
         	<a href="logout.html" data-bind="click: logout" class="btn">Logout<i class="icon-off"></i></a>
         </div>
         <h2>Chatter <small>Online Chat Room</small></h2>
-        <div id="chatTest"> </div>
+        <div ng-controller="ErrorCtrl">
+        	 <div class="alert alert-danger notification">
+	         	Whoops! An error occurred: {{error}}
+	         </div>
+        </div>
       </div>
    </header>
    
@@ -58,12 +61,12 @@
    	<div class="row">
    		<div class="col-md-12" id="chats" ng-controller="ChatCtrl">
    			<div ng-repeat="chat in chats | reverse" class="chat {{chat.direction}}" ng-class="{'broadcast': chat.broadcast}">
-          <span class="from">
-            {{chat.from}}
-            <small ng-if="chat.broadcast">BROADCAST</small>
-          </span>
-          <span class="message">{{chat.message}}</span>
-        </div>
+          		<span class="from">
+		        	{{chat.from}}
+		       		<small ng-if="chat.broadcast">BROADCAST</small>
+		        </span>
+		        <span class="message">{{chat.message}}</span>
+		    </div>
    		</div>
    		
    	

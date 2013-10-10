@@ -18,7 +18,7 @@ app.factory('socket', function($rootScope) {
 
     var socket = new SockJS('/chatter/portfolio');
     var stompClient = Stomp.over(socket);
-    stompClient.connect('steve', 'pass', function(frame) {
+    stompClient.connect('', '', function(frame) {
       $rootScope.$broadcast('sockConnected', frame);
     });
 
@@ -29,18 +29,25 @@ app.factory('socket', function($rootScope) {
 
 
 app.controller('RandomFactCtrl', ['$rootScope', '$scope', 'socket', function($rootScope, $scope, socket) {
-    
     $scope.stompClient = socket.stompClient;
-    console.log("RANDOM1");
     $scope.$on('sockConnected', function(event, frame) {
-
         userName = frame.headers['user-name'];
         queueSuffix = frame.headers['queue-suffix'];
-        console.log("RANDOM");
         $scope.stompClient.subscribe("/queue/random-fact", function(message) {
             $scope.fact = JSON.parse(message.body);
             $scope.$apply();
         }); 
     });
- 
+}]);
+
+app.controller('ErrorCtrl', ['$rootScope', '$scope', 'socket', function($rootScope, $scope, socket) {
+    $scope.stompClient = socket.stompClient;
+    $scope.$on('sockConnected', function(event, frame) {
+        userName = frame.headers['user-name'];
+        queueSuffix = frame.headers['queue-suffix'];
+        $scope.stompClient.subscribe("/queue/errors", function(message) {
+            $scope.error = JSON.parse(message.body);
+            $scope.$apply();
+        }); 
+    });
 }]);

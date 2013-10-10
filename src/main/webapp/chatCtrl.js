@@ -14,7 +14,6 @@ app.controller('ChatCtrl', ['$rootScope', '$scope', 'socket', function($rootScop
         });
 
         $scope.stompClient.subscribe("/queue/chats", function(message) {
-            console.log("processing");
             $scope.processIncomingMessage(message, true);
         });
         

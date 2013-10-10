@@ -31,12 +31,10 @@ public class SockController {
 	public SockController(RandomFactService randomFactService, SimpMessageSendingOperations messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
 		this.randomFactService = randomFactService;
-		
 	}
 		
 	@SubscribeEvent("/join")
-	public List<String> join(Principal principal) throws Exception {
-		logger.debug(principal.getName() + " joined the chat!");
+	public List<String> join(Principal principal) {
 		if(!users.contains(principal.getName())) {
 			users.add(principal.getName());
 		}
@@ -48,11 +46,10 @@ public class SockController {
 	}
 
 	@MessageMapping(value="/chat")
-	public void getChat(Chat chat, Principal principal) {
+	public void chatReveived(Chat chat, Principal principal) {
 		chat.setFrom(principal.getName());
-
+		
 		if("all".equals(chat.getTo())) {
-			logger.error("Broadcasting chat");
 			messagingTemplate.convertAndSend("/queue/chats", chat);
 		}
 		else {
